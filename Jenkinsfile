@@ -1,28 +1,51 @@
-pipeline{
-  agent any
+pipeline {
+    agent any
 
-  tools{
-    nodejs 'NodeJS-24'
-  }
+    stages {
+        stage('Check Tools') {
+            steps {
+                sh 'node -v'
+                sh 'npm -v'
+            }
+        }
 
-  stages{
-    stage('checkout'){
-          steps{
-            sh 'git clone https://github.com/saiabbhiram/railway-ticket-reservation-system'
-          }
+        stage('Install') {
+            steps {
+                sh 'npm ci'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    sudo mkdir -p /var/www/railway-ticket-application
+                    sudo rm -rf /var/www/railway-ticket-application/*
+                    sudo cp -r dist/. /var/www/railway-ticket-application/
+                '''
+            }
+        }
     }
 
-    stage('build'){
-      steps{
-        sh 'cd railway-ticket-reservation-system && npm install'
-        sh 'cd railway-ticket-reservation-system && npm run build'
-      }
+    post {
+        success {
+            echo 'SUCCESS: Your React application is deployed!'
+        }
+
+        failure {
+            echo 'FAILED: Check the Jenkins console output.'
+        }
     }
-    
-    stage('Test') {
-      steps {
-        echo 'No test cases configured. Skipping tests.'
-      }
-    }
-  }
 }
+
