@@ -157,6 +157,68 @@ npm -v
 
 ---
 
+## Jenkins Sudo Configuration
+
+Jenkins requires permission to create directories and copy the React production build into the Nginx web root.
+
+### 1. Open sudoers configuration
+
+```bash
+sudo visudo
+```
+
+Add the following line at the bottom:
+
+```bash
+jenkins ALL=(root) NOPASSWD: /usr/bin/mkdir, /usr/bin/rm, /usr/bin/cp
+```
+
+### 2. Verify command paths
+
+```bash
+which mkdir
+which rm
+which cp
+```
+
+### 3. Test Jenkins permissions
+
+```bash
+sudo -u jenkins sudo -n /usr/bin/mkdir -p /var/www/railway-ticket-application
+```
+
+### 4. Configure deployment directory
+
+```bash
+sudo mkdir -p /var/www/railway-ticket-application
+```
+
+### 5. Jenkins deployment commands
+
+```bash
+sudo mkdir -p /var/www/railway-ticket-application
+sudo rm -rf /var/www/railway-ticket-application/*
+sudo cp -r dist/. /var/www/railway-ticket-application/
+```
+
+### 6. Configure Nginx
+
+Set the Nginx document root to:
+
+```nginx
+root /var/www/railway-ticket-application;
+index index.html;
+```
+
+Test and reload Nginx:
+
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+**Note:** The Jenkins sudoers configuration enables passwordless execution of the specified commands. Restrict deployment permissions appropriately and avoid granting unnecessary root access.
+
 ## 📖 Application Walkthrough & Test Flow
 
 1. **Search Trains**:
