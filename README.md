@@ -82,6 +82,7 @@ railway-ticket-booking/
 ├── package.json                    # Project dependencies and npm scripts
 ├── vite.config.js                  # Vite configuration with Tailwind v4 plugin
 ├── public/                         # Static assets
+├── Jenkinsfile                     # Jenkinsfile
 └── src/
     ├── index.css                   # Tailwind CSS imports & print styles
     ├── main.jsx                    # React root mounting
